@@ -20,7 +20,11 @@ void refresh_1(byte *dest, byte *src, byte *pal, int cnt)
 #ifndef ASM_REFRESH_2
 void refresh_2(un16 *dest, byte *src, un16 *pal, int cnt)
 {
-	while (cnt--) *(dest++) = pal[*(src++)];
+	uint16_t c;
+	while (cnt--) {
+		c = pal[*(src++)];
+		*(dest++) = ((__uint16_t) ((((c) >> 8) & 0xff) | (((c) & 0xff) << 8)));
+	}
 }
 #endif
 

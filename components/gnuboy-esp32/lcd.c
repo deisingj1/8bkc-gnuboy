@@ -138,7 +138,7 @@ void ev_poll()
 }
 
 
-uint16_t oledfb[80*64];
+//uint16_t oledfb[80*64];
 
 //Averages four pixels into one
 int getAvgPix(uint16_t* bufs, int pitch, int x, int y) {
@@ -231,36 +231,27 @@ int addOverlayPixel(uint16_t p, uint32_t ov) {
 
 //This thread runs on core 1.
 void gnuboy_esp32_videohandler() {
-	int x, y;
+	//uint16_t oledfb[160*144];
 	uint16_t *oledfbptr;
 	uint16_t c;
 	uint32_t *ovl;
 	volatile uint16_t *rendering;
-	printf("Video thread running\n");
-	memset(oledfb, 0, sizeof(oledfb));
+	//memset(oledfb, 0, (160*144*2));
 	while(!doShutdown) {
 		int ry; //Y on screen
 		//if (toRender==NULL) 
 		xSemaphoreTake(renderSem, portMAX_DELAY);
 		rendering=toRender;
 		ovl=(uint32_t*)overlay;
-		oledfbptr=oledfb;
-		ry=0;
-		for (y=0; y<64; y++) {
-			int doThreeLines=((y%4)==0);
-			for (x=0; x<80; x++) {
-				if (!doThreeLines) {
-					c=getAvgPixSubpixrendering((uint16_t*)rendering, 160*2, (x*2), ry);
-				} else {
-					c=getAvgPixSubpixrenderingThreeLines((uint16_t*)rendering, 160*2, (x*2), ry);
-				}
-				if (ovl) c=addOverlayPixel(c, *ovl++);
-				*oledfbptr++=(c>>8)+((c&0xff)<<8);
-			}
-			ry+=2;
-			if (doThreeLines) ry++;
+		//oledfbptr=oledfb;
+		/*
+		for (int i=0; i<(144*160); i++) {
+			c=*rendering;
+			if (ovl) c=addOverlayPixel(c, *ovl++);
+			*rendering++=;
 		}
-		kchal_send_fb(oledfb);
+		*/
+		kchal_send_fb(toRender);
 	}
 	vTaskDelete(NULL);
 }

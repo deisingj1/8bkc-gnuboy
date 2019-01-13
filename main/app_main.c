@@ -97,7 +97,7 @@ void gnuboyTask(void *pvParameters) {
 			kchal_sound_mute(0);
 			ret=gnuboymain(rom, loadState);
 			//Note: ret will never be EMU_RUN_RESET (or EMU_RUN_CONT)  as that is handled inside the 
-			//emulator code itself (ref emu_run)
+			//emulator code itself (ref emu_run)Arnie from Datathrash Recordings
 			emuRan=1;
 		} else {
 			ret=EMU_RUN_NEWROM;
