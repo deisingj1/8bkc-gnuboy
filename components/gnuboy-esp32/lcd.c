@@ -225,8 +225,8 @@ int addOverlayPixel(uint16_t p, uint32_t ov) {
 	r=(br*(256-a))+(or*a);
 	g=(bg*(256-a))+(og*a);
 	b=(bb*(256-a))+(ob*a);
-
-	return ((r>>(3+8))<<11)+((g>>(2+8))<<5)+((b>>(3+8))<<0);
+	int ret = ((r>>(3+8))<<11)+((g>>(2+8))<<5)+((b>>(3+8))<<0);
+	return (ret>>8)+((ret&0xff)<<8);
 }
 
 //This thread runs on core 1.
@@ -244,6 +244,17 @@ void gnuboy_esp32_videohandler() {
 		rendering=toRender;
 		ovl=(uint32_t*)overlay;
 		//oledfbptr=oledfb;
+		if(ovl) {
+			for(int y=0; y < 144; y++) {
+				for(int x=0; x < 160;x++) {
+					c=*rendering;
+					if(y < 64 && x < 80) { 
+						c=addOverlayPixel(c, *ovl++);
+					}
+					*rendering++=c;
+				}
+			}
+		}
 		/*
 		for (int i=0; i<(144*160); i++) {
 			c=*rendering;

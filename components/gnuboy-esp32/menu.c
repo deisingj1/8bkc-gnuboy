@@ -21,6 +21,10 @@ const char graphics[]={
 #include "graphics.inc"
 };
 
+//int RES_X=160;
+int RES_X=80;
+//int RES_Y=144;
+int RES_Y=64;
 
 void renderGfx(uint32_t *ovl, int dx, int dy, int sx, int sy, int sw, int sh) {
 	uint32_t *gfx=(uint32_t*)graphics;
@@ -30,24 +34,24 @@ void renderGfx(uint32_t *ovl, int dx, int dy, int sx, int sy, int sw, int sh) {
 		sw+=dx;
 		dx=0;
 	}
-	if ((dx+sw)>80) {
-		sw-=((dx+sw)-80);
-		dx=80-sw;
+	if ((dx+sw)>RES_X) {
+		sw-=((dx+sw)-RES_X);
+		dx=RES_X-sw;
 	}
 	if (dy<0) {
 		sy-=dy;
 		sh+=dy;
 		dy=0;
 	}
-	if ((dy+sh)>64) {
-		sh-=((dy+sh)-64);
-		dy=64-sh;
+	if ((dy+sh)>RES_Y) {
+		sh-=((dy+sh)-RES_Y);
+		dy=RES_Y-sh;
 	}
 
 	for (y=0; y<sh; y++) {
 		for (x=0; x<sw; x++) {
-			i=gfx[(sy+y)*80+(sx+x)];
-			if (i&0x80000000) ovl[(dy+y)*80+(dx+x)]=i;
+			i=gfx[(sy+y)*RES_X+(sx+x)];
+			if (i&0x80000000) ovl[(dy+y)*RES_X+(dx+x)]=i;
 		}
 	}
 }
@@ -70,8 +74,8 @@ void gbfemtoMenuInit() {
 void pcm_mute();
 
 void gbfemtoShowSnapshotting(uint32_t *overlay) {
-	memset(overlay, 0, 80*64*4);
-	renderGfx(overlay, 0, 14, 0, 268, 80, 40);
+	memset(overlay, 0, RES_X*RES_Y*4);
+	renderGfx(overlay, 0, 14, 0, 268, RES_X, 40);
 	vidRenderOverlay();
 }
 
@@ -88,7 +92,7 @@ int gbfemtoShowMenu() {
 	kchal_sound_mute(1);
 	while(1) {
 		esp_task_wdt_feed();
-		memset(overlay, 0, 80*64*4);
+		memset(overlay, 0, RES_X*RES_Y*4);
 		newIo=kchal_get_keys();
 		//Filter out only newly pressed buttons
 		io=(oldIo^newIo)&newIo;
@@ -151,18 +155,18 @@ int gbfemtoShowMenu() {
 
 		if (scroll>0) scroll+=SCROLLSPD;
 		if (scroll<0) scroll-=SCROLLSPD;
-		if (scroll>64 || scroll<-64) {
+		if (scroll>RES_Y || scroll<-RES_Y) {
 			prevItem=menuItem;
 			scroll=0;
 			doRefresh=1; //show last scroll thing
 		}
-		if (prevItem!=menuItem) renderGfx(overlay, 0, 16+scroll, 0,32*prevItem,80,32);
+		if (prevItem!=menuItem) renderGfx(overlay, 0, 16+scroll, 0,32*prevItem,RES_X,32);
 		if (scroll) {
 			doRefresh=1;
-			renderGfx(overlay, 0, 16+scroll+((scroll>0)?-64:64), 0,32*menuItem,80,32);
+			renderGfx(overlay, 0, 16+scroll+((scroll>0)?-RES_Y:RES_Y), 0,32*menuItem,RES_X,32);
 			oldArrowsTick=-1; //to force arrow redraw
 		} else {
-			renderGfx(overlay, 0, 16, 0,32*menuItem,80,32);
+			renderGfx(overlay, 0, 16, 0,32*menuItem,RES_X,32);
 			//Render arrows
 			int t=xTaskGetTickCount()/(400/portTICK_PERIOD_MS);
 			t=(t&1);
