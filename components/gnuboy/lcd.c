@@ -44,7 +44,7 @@ struct scan scan;
 
 
 //Lowering this decreases memory, but increases risk of slowdown.
-#define CACHED_PATPIX_NO 1200
+#define CACHED_PATPIX_NO 1300
 
 typedef struct {
 	int16_t pat;

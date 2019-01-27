@@ -210,6 +210,9 @@ void app_main()
 	xTaskCreatePinnedToCore(&lineTask, "lineTask", 1024, NULL, 6, NULL, 1);
 	xTaskCreatePinnedToCore(&gnuboyTask, "gnuboyTask", 1024*6, NULL, 5, NULL, 0);
 	xTaskCreatePinnedToCore(&monTask, "monTask", 1024*2, NULL, 7, NULL, 0);
+	//xTaskCreate(&lineTask, "lineTask", 1024, NULL, 6, NULL);
+	//xTaskCreate(&gnuboyTask, "gnuboyTask", 1024*6, NULL, 5, NULL);
+	//xTaskCreate(&monTask, "monTask", 1024*2, NULL, 7, NULL, 0);
 }
 
 
